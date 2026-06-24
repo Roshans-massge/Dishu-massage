@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dishu Friendship Surprise ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================
+       CSS VARIABLES & GLOBAL POOKIE THEMES
+       ========================================= */
+    :root {
+      --primary-glow: rgba(255, 105, 180, 0.5);
+      --glass-bg: rgba(255, 255, 255, 0.45); /* Soft marshmallow glass */
+      --glass-border: rgba(255, 255, 255, 0.65);
+      --text-main: #4a2143; /* Rich dark berry for high contrast on pastel bg */
+      --text-muted: #6e3d64;
+      --accent: #ff4d88;
+      --accent-glow: #ff758f;
+      --neon-cyan: #ff9ebb; /* Soft pastel pink */
+      --pookie-yellow: #fff2cc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #ffe5ec, #ffc2d1, #f0e6ff, #ffe5ec, #fff0f5);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      overflow-x: hidden;
+      perspective: 1200px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* =========================================
+       DYNAMIC BACKDROP SYSTEMS
+       ========================================= */
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* =========================================
+       HEADER & GAMIFIED CONTROLS (PASTEL)
+       ========================================= */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 14px 20px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: rgba(255, 229, 236, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1.5px solid var(--glass-border);
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .badge-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: var(--text-main);
+      border: 1.5px solid var(--glass-border);
+      box-shadow: 0 4px 10px rgba(255, 105, 180, 0.15);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1.5px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .control-btn:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff758f, #e040fb, #ff9ebb);
+      box-shadow: 0 0 10px rgba(255, 117, 143, 0.5);
+      transition: width 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    /* =========================================
+       3D PARALLAX CUTE MARSHMALLOW CARD
+       ========================================= */
+    .screen {
+      display: none;
+      width: 90%;
+      max-width: 440px;
+      margin-top: 90px;
+      margin-bottom: 40px;
+      z-index: 10;
+      perspective: 1000px;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 2px solid var(--glass-border);
+      border-radius: 36px; /* Super rounded marshmallow style */
+      padding: 36px 28px;
+      box-shadow: 0 15px 35px rgba(255, 105, 180, 0.15),
+                  inset 0 2px 2px rgba(255, 255, 255, 0.5);
+      text-align: center;
+      transform-style: preserve-3d;
+      transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s ease;
+      will-change: transform;
+    }
+
+    .glass-card h1, .glass-card h2 {
+      transform: translateZ(50px);
+      margin-bottom: 15px;
+      color: var(--text-main);
+    }
+
+    .glass-card p {
+      transform: translateZ(30px);
+      margin-bottom: 24px;
+    }
+
+    .glass-card input, .glass-card select, .glass-card textarea {
+      transform: translateZ(25px);
+    }
+
+    .glass-card .btn {
+      transform: translateZ(45px);
+    }
+
+    .glass-card.shake {
+      animation: shake3D 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shake3D {
+      10%, 90% { transform: translate3d(-6px, 0, 0) rotateY(-3deg); }
+      20%, 80% { transform: translate3d(8px, 0, 0) rotateY(4deg); }
+      30%, 50%, 70% { transform: translate3d(-10px, 0, 0) rotateY(-5deg); }
+      40%, 60% { transform: translate3d(10px, 0, 0) rotateY(5deg); }
+    }
+
+    /* =========================================
+       TYPOGRAPHY & INPUT FIELDS
+       ========================================= */
+    h1 {
+      font-size: 2.4rem;
+      text-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+      font-weight: 800;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      text-shadow: 0 1px 4px rgba(255, 105, 180, 0.2);
+    }
+
+    p {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.5);
+      border: 2px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 20px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: inset 0 2px 4px rgba(255, 105, 180, 0.05);
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      background: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    /* =========================================
+       SQUISHY 3D MARSHMALLOW BUTTONS
+       ========================================= */
+    .btn {
+      background: linear-gradient(135deg, #ff758f, #ff4d88);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 16px 32px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-bottom: 5px solid #d81b60; /* Volumetric squishy bottom */
+      box-shadow: 0 8px 20px rgba(255, 77, 136, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-4px) scale(1.03) translateZ(10px);
+      box-shadow: 0 12px 24px rgba(255, 77, 136, 0.55);
+    }
+
+    .btn:active {
+      transform: translateY(2px) scale(0.96);
+      border-bottom-width: 1px;
+      box-shadow: 0 3px 10px rgba(255, 77, 136, 0.3);
+    }
+
+    /* =========================================
+       INTERACTIVE MINI GAME STRUCTURES
+       ========================================= */
+
+    /* Layer 2: 3D Memory Board */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+      perspective: 600px;
+    }
+
+    .memory-card {
+      aspect-ratio: 1;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-radius: 18px;
+    }
+
+    .memory-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      border-radius: 18px;
+      border: 2px solid var(--glass-border);
+      box-shadow: 0 5px 12px rgba(255, 105, 180, 0.1);
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #ff9ebb, #ff758f);
+      color: #fff;
+    }
+
+    .card-back {
+      background: rgba(255, 255, 255, 0.6);
+      transform: rotateY(180deg);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Layer 4: Volumetric Math Rows */
+    .math-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .math-row {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 12px 18px;
+      border-radius: 18px;
+      border: 2px solid var(--glass-border);
+      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.08);
+      transform: translateZ(15px);
+    }
+
+    .math-expr {
+      font-size: 1.3rem;
+      font-weight: 800;
+      flex: 1;
+      text-align: left;
+      color: var(--text-main);
+    }
+
+    .math-input {
+      width: 95px !important;
+      margin-bottom: 0 !important;
+      text-align: center;
+    }
+
+    /* MCQ Push Plates */
+    .mcq-container {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .mcq-option {
+      background: rgba(255, 255, 255, 0.45);
+      border: 2px solid var(--glass-border);
+      padding: 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text-main);
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border-bottom: 4px solid rgba(255, 105, 180, 0.25);
+    }
+
+    .mcq-option:hover {
+      background: #ffffff;
+      border-color: var(--accent);
+      transform: translateY(-3px) translateZ(15px);
+      box-shadow: 0 5px 15px rgba(255, 77, 136, 0.2);
+    }
+
+    .mcq-option:active {
+      transform: translateY(1px);
+      border-bottom-width: 1px;
+    }
+
+    /* Layer 6: Stars Catcher Area */
+    .star-game-area {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 22px;
+      border: 2px solid var(--glass-border);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: inset 0 5px 15px rgba(255, 105, 180, 0.05);
+    }
+
+    .game-star {
+      position: absolute;
+      font-size: 2.3rem;
+      cursor: pointer;
+      user-select: none;
+      filter: drop-shadow(0 0 12px #ffeb3b);
+      transition: transform 0.2s;
+    }
+
+    /* Layer 8: Emoji Cards */
+    .emoji-puzzle-row {
+      background: rgba(255, 255, 255, 0.45);
+      border: 2px solid var(--glass-border);
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.05);
+    }
+
+    .emoji-display {
+      font-size: 2.5rem;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
+    }
+
+    /* Layer 10: 3D Marshmallow Nodes */
+    .pattern-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 260px;
+      margin: 0 auto 20px auto;
+    }
+
+    .pattern-node {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.55);
+      border: 2px solid var(--glass-border);
+      border-bottom: 5px solid rgba(255, 105, 180, 0.3); /* Pillar depth */
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 15px rgba(255, 105, 180, 0.05);
+    }
+
+    .pattern-node.active {
+      background: linear-gradient(135deg, #ff758f, #e040fb);
+      border-color: #fff;
+      color: white;
+      border-bottom-width: 2px;
+      box-shadow: 0 0 25px rgba(255, 117, 143, 0.5);
+      transform: translateY(3px) scale(1.1);
+    }
+
+    /* =========================================
+       3D POOKIE CHEST BOX ENVIRONMENT
+       ========================================= */
+    .magic-box-environment {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      margin: 30px auto;
+      perspective: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chest-3d {
+      width: 140px;
+      height: 100px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-15deg) rotateY(30deg);
+      transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: pointer;
+    }
+
+    /* Marshmallow Pastel panels of 3D chest */
+    .chest-face {
+      position: absolute;
+      background: linear-gradient(135deg, #ffb3c6, #ff8fa3);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    .chest-front  { width: 140px; height: 100px; transform: rotateY(0deg) translateZ(50px); }
+    .chest-back   { width: 140px; height: 100px; transform: rotateY(180deg) translateZ(50px); background: #ff8fa3; }
+    .chest-left   { width: 100px; height: 100px; transform: rotateY(-90deg) translateZ(70px); }
+    .chest-right  { width: 100px; height: 100px; transform: rotateY(90deg) translateZ(70px); }
+    .chest-bottom { width: 140px; height: 100px; transform: rotateX(-90deg) translateZ(50px); background: #ff758f; }
+    
+    .chest-lid {
+      width: 140px;
+      height: 40px;
+      position: absolute;
+      top: -38px;
+      transform-style: preserve-3d;
+      transform-origin: bottom;
+      transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+      background: linear-gradient(90deg, #ff4d88, #ff758f);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 -4px 12px rgba(255, 77, 136, 0.3);
+      transform: translateZ(50px) rotateX(0deg);
+    }
+
+    .chest-lid::after {
+      content: '🎀';
+      position: absolute;
+      top: -24px;
+      left: 54px;
+      font-size: 2.2rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    }
+
+    .strap-left, .strap-right {
+      position: absolute;
+      width: 15px;
+      height: 100%;
+      background: linear-gradient(to bottom, #ffffff, #ffe5ec);
+      border: 0.5px solid rgba(255, 105, 180, 0.2);
+    }
+    .strap-left  { left: 25px; }
+    .strap-right { right: 25px; }
+
+    .magic-box-environment.opened .chest-lid {
+      transform: translateZ(50px) rotateX(-120deg);
+    }
+
+    .magic-box-environment.opened .chest-3d {
+      transform: rotateX(-20deg) rotateY(180deg) scale(0.9);
+    }
+
+    .ambient-beam {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff0f5 0%, rgba(255, 117, 143, 0) 75%);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+      z-index: 2;
+    }
+
+    .magic-box-environment.opened .ambient-beam {
+      width: 350px;
+      height: 350px;
+      opacity: 0.95;
+    }
+
+    /* =========================================
+       FRIENDSHIP CARD & TYPING FIELD
+       ========================================= */
+    .friendship-card {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(255, 117, 143, 0.6);
+      border-radius: 26px;
+      padding: 34px 24px;
+      box-shadow: 0 0 45px rgba(255, 117, 143, 0.3);
+      margin-top: 25px;
+      text-align: left;
+      max-height: 440px;
+      overflow-y: auto;
+    }
+
+    .friendship-card h3 {
+      font-family: 'Caveat', cursive, sans-serif;
+      text-align: center;
+      color: #ff4d88;
+      text-shadow: 0 0 15px rgba(255, 117, 143, 0.3);
+      font-size: 2.3rem;
+      margin-bottom: 20px;
+    }
+
+    .card-message-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-main);
+      font-weight: 700;
+      white-space: pre-line;
+      letter-spacing: 0.3px;
+    }
+
+    /* =========================================
+       SYSTEM LOADERS & DIALOGS
+       ========================================= */
+    #loading-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #ffe5ec;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      width: 55px;
+      height: 55px;
+      border: 5px solid rgba(255, 255, 255, 0.4);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .resume-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 240, 245, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .resume-card {
+      background: #ffffff;
+      border: 2px solid var(--glass-border);
+      padding: 32px;
+      border-radius: 28px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 45px rgba(255, 105, 180, 0.15);
+    }
+
+    .resume-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .floating-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 150;
+      font-size: 1.6rem;
+      animation: floatHeartUp 2.5s ease-out forwards;
+    }
+
+    @keyframes floatHeartUp {
+      0% {
+        transform: translateY(0) scale(0.6) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-200px) translateX(calc(-70px + 140px * var(--rand-x))) scale(1.4) rotate(45deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING SCREEN -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <h2 style="margin-top: 25px; font-weight: 400; color: #ff4d88; letter-spacing: 1px;">Loading Surprises, Pookie... 🌸</h2>
+  </div>
+
+  <!-- BG CANVAS (STAR MAP & SPARKLE TRAILS) -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- PROGRESS HEADER CONTROL SYSTEM -->
+  <header id="app-header" style="display: none;">
+    <div class="top-controls">
+      <div class="badge-container">
+        <span>🏆</span>
+        <span id="badge-title">Beginner 🌸</span>
+      </div>
+      <div class="action-buttons">
+        <button class="control-btn" id="voice-btn" onclick="app.repeatVoice()">
+          🔊 Repeat Guide
+        </button>
+        <button class="control-btn" id="audio-toggle" onclick="app.toggleMusic()">
+          🎵 Muted
+        </button>
+        <button class="control-btn" onclick="app.resetProgress()" style="background: rgba(255, 77, 136, 0.15);">
+          🗑️ Restart
+        </button>
+      </div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="pb-fill"></div>
+    </div>
+  </header>
+
+  <!-- RESUME PROGRESS POPUP -->
+  <div class="resume-overlay" id="resume-dialog">
+    <div class="resume-card">
+      <h2 style="color: #ff4d88; font-size: 1.7rem; margin-bottom: 1
